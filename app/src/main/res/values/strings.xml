@@ -1,13 +1,18 @@
 <resources>
     <string name="app_name">SocialMobile</string>
-    <string name="age">Возраст</string>
+    <string name="age">Возраст*</string>
     <string name="is_retired">Пенсионер</string>
     <string name="is_disabled">Инвалид</string>
     <string name="disabled_group_1">I группа</string>
     <string name="disabled_group_2">II группа</string>
     <string name="disabled_group_3">III группа</string>
     <string name="is_married">В браке</string>
-    <string name="income_per_month">Доход в месяц</string>
+    <string name="income_per_month">Доход в месяц*</string>
     <string name="children_count">Количество детей</string>
     <string name="disabled_children_count">Количество инвалидов среди детей: %1$d</string>
+    <string name="send_request">Отправить запрос</string>
+    <string name="warning_empty_age">Укажите возраст</string>
+    <string name="warning_empty_income">Укажите доход</string>
+    <string name="request_not_complete">Заполнены не все обязательные поля</string>
+    <string name="action_login">Логин</string>
 </resources>

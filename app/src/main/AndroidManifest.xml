@@ -11,13 +11,14 @@
         android:theme="@style/Theme.SocialMobile"
         android:name=".utils.SocialApp">
 
-        <activity android:name=".view.CalculatorActivity"
+        <activity android:name=".view.activity.CalculatorActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".view.activity.SubsidiesActivity"/>
 
     </application>
 

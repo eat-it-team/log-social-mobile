@@ -1,12 +1,12 @@
-package ru.ircover.socialmobile.view
+package ru.ircover.socialmobile.view.activity
 
 import android.os.Bundle
-import android.widget.CheckBox
-import android.widget.RadioGroup
-import android.widget.SeekBar
-import android.widget.TextView
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.*
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.jakewharton.rxbinding4.view.clicks
 import com.jakewharton.rxbinding4.widget.changes
 import com.jakewharton.rxbinding4.widget.checkedChanges
 import com.jakewharton.rxbinding4.widget.textChanges
@@ -16,10 +16,14 @@ import ru.ircover.socialmobile.R
 import ru.ircover.socialmobile.model.DisabledGroup
 import ru.ircover.socialmobile.presenter.CalculatorPresenter
 import ru.ircover.socialmobile.presenter.CalculatorView
+import ru.ircover.socialmobile.utils.SocialApp
+import ru.ircover.socialmobile.utils.startActivity
 import ru.ircover.socialmobile.utils.toViewVisibility
 
 class CalculatorActivity : MvpAppCompatActivity(), CalculatorView {
-    private val presenter by moxyPresenter { CalculatorPresenter() }
+    private val presenter by moxyPresenter {
+        CalculatorPresenter(SocialApp.api, SocialApp.userSessionWorker)
+    }
     private lateinit var ageEditText: TextInputEditText
     private lateinit var isRetiredCheckBox: CheckBox
     private lateinit var isDisabledCheckBox: CheckBox
@@ -30,6 +34,8 @@ class CalculatorActivity : MvpAppCompatActivity(), CalculatorView {
     private lateinit var childrenCountEditText: TextInputEditText
     private lateinit var disabledChildrenTitleTextView: TextView
     private lateinit var disabledChildrenSeekBar: SeekBar
+    private lateinit var emptyAgeWarningTextView: TextView
+    private lateinit var emptyIncomeWarningTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +78,25 @@ class CalculatorActivity : MvpAppCompatActivity(), CalculatorView {
         disabledChildrenSeekBar = findViewById(R.id.sbDisabledChildren)
         disabledChildrenSeekBar.changes()
             .subscribe { presenter.disabledChildrenCount = it }
+        findViewById<Button>(R.id.bSendRequest).clicks()
+            .subscribe { presenter.sendRequest() }
+        emptyAgeWarningTextView = findViewById(R.id.tvEmptyAgeWarning)
+        emptyIncomeWarningTextView = findViewById(R.id.tvEmptyIncomeWarning)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.action_login -> {
+            presenter.login()
+            true
+        }
+        else -> {
+            super.onOptionsItemSelected(item)
+        }
     }
 
     override fun setAge(age: Int) {
@@ -131,5 +156,21 @@ class CalculatorActivity : MvpAppCompatActivity(), CalculatorView {
 
     override fun setDisabledChildrenCount(count: Int) {
         disabledChildrenTitleTextView.text = getString(R.string.disabled_children_count, count)
+    }
+
+    override fun setEmptyAgeWarningVisibility(isVisible: Boolean) {
+        emptyAgeWarningTextView.visibility = isVisible.toViewVisibility()
+    }
+
+    override fun setEmptyIncomeWarningVisibility(isVisible: Boolean) {
+        emptyIncomeWarningTextView.visibility = isVisible.toViewVisibility()
+    }
+
+    override fun showMessage(stringId: Int) {
+        Toast.makeText(applicationContext, stringId, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun openSubsidies() {
+        startActivity<SubsidiesActivity>()
     }
 }
