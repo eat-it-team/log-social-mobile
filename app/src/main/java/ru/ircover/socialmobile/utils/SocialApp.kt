@@ -5,10 +5,9 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.ircover.socialmobile.api.Api
-import rx.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 class SocialApp : Application() {
@@ -37,7 +36,7 @@ class SocialApp : Application() {
         retrofit = Retrofit.Builder()
             .baseUrl("http://hackathon.rodial.pro:8080/")
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .client(okHttpClient)
             .build()
         api = retrofit.create(Api::class.java)

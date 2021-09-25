@@ -16,13 +16,14 @@ import ru.ircover.socialmobile.R
 import ru.ircover.socialmobile.model.DisabledGroup
 import ru.ircover.socialmobile.presenter.CalculatorPresenter
 import ru.ircover.socialmobile.presenter.CalculatorView
+import ru.ircover.socialmobile.utils.ActivityExtras
 import ru.ircover.socialmobile.utils.SocialApp
 import ru.ircover.socialmobile.utils.startActivity
 import ru.ircover.socialmobile.utils.toViewVisibility
 
 class CalculatorActivity : MvpAppCompatActivity(), CalculatorView {
     private val presenter by moxyPresenter {
-        CalculatorPresenter(SocialApp.api, SocialApp.userSessionWorker)
+        CalculatorPresenter(SocialApp.api, SocialApp.gson, SocialApp.userSessionWorker)
     }
     private lateinit var ageEditText: TextInputEditText
     private lateinit var isRetiredCheckBox: CheckBox
@@ -36,6 +37,7 @@ class CalculatorActivity : MvpAppCompatActivity(), CalculatorView {
     private lateinit var disabledChildrenSeekBar: SeekBar
     private lateinit var emptyAgeWarningTextView: TextView
     private lateinit var emptyIncomeWarningTextView: TextView
+    private lateinit var mainProgressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,6 +84,7 @@ class CalculatorActivity : MvpAppCompatActivity(), CalculatorView {
             .subscribe { presenter.sendRequest() }
         emptyAgeWarningTextView = findViewById(R.id.tvEmptyAgeWarning)
         emptyIncomeWarningTextView = findViewById(R.id.tvEmptyIncomeWarning)
+        mainProgressBar = findViewById(R.id.pbMain)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -92,6 +95,10 @@ class CalculatorActivity : MvpAppCompatActivity(), CalculatorView {
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_login -> {
             presenter.login()
+            true
+        }
+        R.id.action_show_all_subsidies -> {
+            presenter.showAllSubsidies()
             true
         }
         else -> {
@@ -170,7 +177,17 @@ class CalculatorActivity : MvpAppCompatActivity(), CalculatorView {
         Toast.makeText(applicationContext, stringId, Toast.LENGTH_SHORT).show()
     }
 
-    override fun openSubsidies() {
-        startActivity<SubsidiesActivity>()
+    override fun openSubsidies(subsidies: String) {
+        startActivity<SubsidiesActivity> {
+            putExtra(ActivityExtras.SUBSIDIES, subsidies)
+        }
+    }
+
+    override fun setMainProgressBarVisibility(isVisible: Boolean) {
+        mainProgressBar.visibility = isVisible.toViewVisibility()
+    }
+
+    override fun finishActivity() {
+        finish()
     }
 }

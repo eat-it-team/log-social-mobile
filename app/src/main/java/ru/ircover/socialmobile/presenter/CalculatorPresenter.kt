@@ -1,6 +1,10 @@
 package ru.ircover.socialmobile.presenter
 
 import androidx.annotation.StringRes
+import com.google.gson.Gson
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import moxy.MvpView
@@ -44,11 +48,16 @@ interface CalculatorView : MvpView {
     @AddToEndSingle
     fun showMessage(@StringRes stringId: Int)
     @AddToEndSingle
-    fun openSubsidies()
+    fun openSubsidies(subsidies: String)
+    @AddToEndSingle
+    fun setMainProgressBarVisibility(isVisible: Boolean)
+    @AddToEndSingle
+    fun finishActivity()
 }
 
 @InjectViewState
 class CalculatorPresenter(private val api: Api,
+                          private val gson: Gson,
                           private val userSessionWorker: UserSessionWorker) : MvpPresenter<CalculatorView>() {
     private var isInitialized = false
 
@@ -127,13 +136,68 @@ class CalculatorPresenter(private val api: Api,
                 setEmptyAgeWarningVisibility(age == null)
                 setEmptyIncomeWarningVisibility(income == null && (age ?: 0) > 18)
             } else {
-                //TODO: запросить субсидии по введённым данным
+                //TODO: запросить субсидии по введённым данным, а не по захаркоженному юзеру
+                viewState.setMainProgressBarVisibility(true)
+                Observable.just(1500L)
+                    .map { millis ->
+                        Thread.sleep(millis)//симуляция продолжительного запроса
+                        2
+                    }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { userId ->
+                        viewState.setMainProgressBarVisibility(false)
+                        showUserSubsidies(userId, closeActivity = false)
+                    }
             }
         }
     }
 
     fun login() {
         //TODO: сделать вызов api
-        viewState.openSubsidies()
+        viewState.setMainProgressBarVisibility(true)
+        Observable.just(500L)
+            .map { millis ->
+                Thread.sleep(millis)//симуляция продолжительного запроса
+                2
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { userId ->
+                viewState.setMainProgressBarVisibility(false)
+                userSessionWorker.setUserId(userId)
+                showUserSubsidies(userId, closeActivity = true)
+            }
+    }
+
+    fun showAllSubsidies() {
+        viewState.setMainProgressBarVisibility(true)
+        api.getAllSubsidies()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ subsidies ->
+                viewState.setMainProgressBarVisibility(false)
+                viewState.openSubsidies(gson.toJson(subsidies))
+            }, {
+                viewState.setMainProgressBarVisibility(false)
+                viewState.showMessage(R.string.error_unknown)
+            })
+    }
+
+    private fun showUserSubsidies(userId: Int, closeActivity: Boolean) {
+        viewState.setMainProgressBarVisibility(true)
+        api.getUserSubsidies(userId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ subsidies ->
+                viewState.setMainProgressBarVisibility(false)
+                viewState.openSubsidies(gson.toJson(subsidies))
+                if(closeActivity) {
+                    viewState.finishActivity()
+                }
+            }, {
+                viewState.setMainProgressBarVisibility(false)
+                viewState.showMessage(R.string.error_unknown)
+            })
     }
 }

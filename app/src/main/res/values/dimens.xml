@@ -2,4 +2,6 @@
 <resources>
     <dimen name="margin_normal">5dp</dimen>
     <dimen name="padding_tab">20dp</dimen>
+    <dimen name="text_size_big">20sp</dimen>
+    <dimen name="text_size_small">14sp</dimen>
 </resources>

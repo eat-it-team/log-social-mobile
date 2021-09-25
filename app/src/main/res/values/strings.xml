@@ -15,4 +15,8 @@
     <string name="warning_empty_income">Укажите доход</string>
     <string name="request_not_complete">Заполнены не все обязательные поля</string>
     <string name="action_login">Логин</string>
+    <string name="error_unknown">Неизвестная ошибка</string>
+    <string name="subsidy_period_once">Единоразовая</string>
+    <string name="subsidy_period_monthly">Ежемесячная</string>
+    <string name="action_show_all_subsidies">Загрузить все субсидии</string>
 </resources>
