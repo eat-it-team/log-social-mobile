@@ -18,5 +18,10 @@
     <string name="error_unknown">Неизвестная ошибка</string>
     <string name="subsidy_period_once">Единоразовая</string>
     <string name="subsidy_period_monthly">Ежемесячная</string>
-    <string name="action_show_all_subsidies">Загрузить все субсидии</string>
+    <string name="action_show_all_subsidies">Показать все субсидии</string>
+    <string name="action_help">Вопрос эксперту</string>
+    <string name="button_send">Отправить</string>
+    <string name="message_sent_successfully">Отправлено успешно</string>
+    <string name="button_cancel">Отмена</string>
+    <string name="notification_subsidy_approved">Субсидия одобрена</string>
 </resources>

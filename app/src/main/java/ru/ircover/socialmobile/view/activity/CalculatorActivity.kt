@@ -1,15 +1,27 @@
 package ru.ircover.socialmobile.view.activity
 
+import android.app.Notification
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.NotificationChannelCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.graphics.drawable.toBitmap
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.jakewharton.rxbinding4.view.clicks
 import com.jakewharton.rxbinding4.widget.changes
 import com.jakewharton.rxbinding4.widget.checkedChanges
 import com.jakewharton.rxbinding4.widget.textChanges
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import moxy.MvpAppCompatActivity
 import moxy.ktx.moxyPresenter
 import ru.ircover.socialmobile.R
@@ -101,6 +113,22 @@ class CalculatorActivity : MvpAppCompatActivity(), CalculatorView {
             presenter.showAllSubsidies()
             true
         }
+        R.id.action_help -> {
+            val editText = EditText(this)
+            AlertDialog.Builder(this)
+                .setTitle(R.string.action_help)
+                .setView(editText)
+                .setPositiveButton(R.string.button_send) { dialog, _ ->
+                    dialog.dismiss()
+                    showMessage(R.string.message_sent_successfully)
+                }
+                .setNegativeButton(R.string.button_cancel) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create()
+                .show()
+            true
+        }
         else -> {
             super.onOptionsItemSelected(item)
         }
@@ -188,6 +216,27 @@ class CalculatorActivity : MvpAppCompatActivity(), CalculatorView {
     }
 
     override fun finishActivity() {
+        //TODO: симуляция пуша - вообще дропнуть отсюда
+        Observable.just(10000L)
+            .map { millis ->
+                Thread.sleep(millis)
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                var channel = NotificationChannelCompat.Builder("1", NotificationManager.IMPORTANCE_MAX)
+                    .build()
+                val notificationBuilder = NotificationCompat.Builder(applicationContext, channel.id)
+                    .setContentTitle(getString(R.string.notification_subsidy_approved))
+                    .setSmallIcon(R.drawable.icon_notification)
+                    .setLargeIcon(resources.getDrawable(R.drawable.icon_notification).toBitmap())
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                    .setDefaults(NotificationCompat.DEFAULT_ALL)
+                val notificationManager = NotificationManagerCompat.from(applicationContext)
+                notificationManager.createNotificationChannel(channel)
+                notificationManager.notify(1, notificationBuilder.build())
+            }
         finish()
     }
 }
