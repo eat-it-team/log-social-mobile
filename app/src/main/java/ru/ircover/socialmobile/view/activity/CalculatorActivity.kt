@@ -1,9 +1,6 @@
 package ru.ircover.socialmobile.view.activity
 
-import android.app.Notification
 import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -203,6 +200,10 @@ class CalculatorActivity : MvpAppCompatActivity(), CalculatorView {
 
     override fun showMessage(stringId: Int) {
         Toast.makeText(applicationContext, stringId, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showMessage(string: String) {
+        Toast.makeText(applicationContext, string, Toast.LENGTH_SHORT).show()
     }
 
     override fun openSubsidies(subsidies: String) {

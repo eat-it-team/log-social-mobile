@@ -48,6 +48,8 @@ interface CalculatorView : MvpView {
     @AddToEndSingle
     fun showMessage(@StringRes stringId: Int)
     @AddToEndSingle
+    fun showMessage(string: String)
+    @AddToEndSingle
     fun openSubsidies(subsidies: String)
     @AddToEndSingle
     fun setMainProgressBarVisibility(isVisible: Boolean)
@@ -180,7 +182,7 @@ class CalculatorPresenter(private val api: Api,
                 viewState.openSubsidies(gson.toJson(subsidies))
             }, {
                 viewState.setMainProgressBarVisibility(false)
-                viewState.showMessage(R.string.error_unknown)
+                viewState.showMessage(it.toString())
             })
     }
 
@@ -197,7 +199,7 @@ class CalculatorPresenter(private val api: Api,
                 }
             }, {
                 viewState.setMainProgressBarVisibility(false)
-                viewState.showMessage(R.string.error_unknown)
+                viewState.showMessage(it.toString())
             })
     }
 }
