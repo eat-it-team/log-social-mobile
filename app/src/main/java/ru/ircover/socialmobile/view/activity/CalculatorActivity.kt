@@ -42,11 +42,12 @@ class CalculatorActivity : MvpAppCompatActivity(), CalculatorView {
     private lateinit var incomeLayout: TextInputLayout
     private lateinit var incomeEditText: TextInputEditText
     private lateinit var childrenCountEditText: TextInputEditText
-    private lateinit var disabledChildrenTitleTextView: TextView
-    private lateinit var disabledChildrenSeekBar: SeekBar
     private lateinit var emptyAgeWarningTextView: TextView
     private lateinit var emptyIncomeWarningTextView: TextView
     private lateinit var mainProgressBar: ProgressBar
+    private lateinit var disabledChildrenCheckBox: CheckBox
+    private lateinit var incompleteFamilyCheckBox: CheckBox
+    private lateinit var youngFamilyCheckBox: CheckBox
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,15 +86,23 @@ class CalculatorActivity : MvpAppCompatActivity(), CalculatorView {
         childrenCountEditText = findViewById(R.id.etChildrenCount)
         childrenCountEditText.textChanges()
             .subscribe { presenter.childrenCount = it.toString().toIntOrNull() }
-        disabledChildrenTitleTextView = findViewById(R.id.tvDisabledChildrenTitle)
-        disabledChildrenSeekBar = findViewById(R.id.sbDisabledChildren)
-        disabledChildrenSeekBar.changes()
-            .subscribe { presenter.disabledChildrenCount = it }
         findViewById<Button>(R.id.bSendRequest).clicks()
             .subscribe { presenter.sendRequest() }
         emptyAgeWarningTextView = findViewById(R.id.tvEmptyAgeWarning)
         emptyIncomeWarningTextView = findViewById(R.id.tvEmptyIncomeWarning)
         mainProgressBar = findViewById(R.id.pbMain)
+        disabledChildrenCheckBox = findViewById(R.id.cbDisabledChildren)
+        disabledChildrenCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            presenter.hasDisabledChildren = isChecked
+        }
+        incompleteFamilyCheckBox = findViewById(R.id.cbIncompleteFamily)
+        incompleteFamilyCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            presenter.isIncompleteFamily = isChecked
+        }
+        youngFamilyCheckBox = findViewById(R.id.cbYoungFamily)
+        youngFamilyCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            presenter.isYoungFamily = isChecked
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -176,18 +185,11 @@ class CalculatorActivity : MvpAppCompatActivity(), CalculatorView {
     }
 
     override fun setDisabledChildrenVisibility(isVisible: Boolean) {
-        isVisible.toViewVisibility().let { visibility ->
-            disabledChildrenTitleTextView.visibility = visibility
-            disabledChildrenSeekBar.visibility = visibility
-        }
+        disabledChildrenCheckBox.visibility = isVisible.toViewVisibility()
     }
 
-    override fun setMaximumDisabledChildrenStates(max: Int) {
-        disabledChildrenSeekBar.max = max
-    }
-
-    override fun setDisabledChildrenCount(count: Int) {
-        disabledChildrenTitleTextView.text = getString(R.string.disabled_children_count, count)
+    override fun setHasDisabledChildren(hasDisabledChildren: Boolean) {
+        disabledChildrenCheckBox.isChecked = hasDisabledChildren
     }
 
     override fun setEmptyAgeWarningVisibility(isVisible: Boolean) {
@@ -239,5 +241,21 @@ class CalculatorActivity : MvpAppCompatActivity(), CalculatorView {
                 notificationManager.notify(1, notificationBuilder.build())
             }
         finish()
+    }
+
+    override fun setIncompleteFamily(isIncompleteFamily: Boolean) {
+        incompleteFamilyCheckBox.isChecked = isIncompleteFamily
+    }
+
+    override fun setIncompleteFamilyVisibility(isVisible: Boolean) {
+        incompleteFamilyCheckBox.visibility = isVisible.toViewVisibility()
+    }
+
+    override fun setYoungFamily(isYoungFamily: Boolean) {
+        youngFamilyCheckBox.isChecked = isYoungFamily
+    }
+
+    override fun setYoungFamilyVisibility(isVisible: Boolean) {
+        youngFamilyCheckBox.visibility = isVisible.toViewVisibility()
     }
 }

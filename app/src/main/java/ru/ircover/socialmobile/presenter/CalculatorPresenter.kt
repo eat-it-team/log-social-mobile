@@ -38,9 +38,7 @@ interface CalculatorView : MvpView {
     @AddToEndSingle
     fun setDisabledChildrenVisibility(isVisible: Boolean)
     @AddToEndSingle
-    fun setMaximumDisabledChildrenStates(max: Int)
-    @AddToEndSingle
-    fun setDisabledChildrenCount(count: Int)
+    fun setHasDisabledChildren(hasDisabledChildren: Boolean)
     @AddToEndSingle
     fun setEmptyAgeWarningVisibility(isVisible: Boolean)
     @AddToEndSingle
@@ -55,6 +53,14 @@ interface CalculatorView : MvpView {
     fun setMainProgressBarVisibility(isVisible: Boolean)
     @AddToEndSingle
     fun finishActivity()
+    @AddToEndSingle
+    fun setIncompleteFamily(isIncompleteFamily: Boolean)
+    @AddToEndSingle
+    fun setIncompleteFamilyVisibility(isVisible: Boolean)
+    @AddToEndSingle
+    fun setYoungFamily(isYoungFamily: Boolean)
+    @AddToEndSingle
+    fun setYoungFamilyVisibility(isVisible: Boolean)
 }
 
 @InjectViewState
@@ -71,6 +77,8 @@ class CalculatorPresenter(private val api: Api,
                     setMarriedVisibility((value ?: 0) > 18)
                     setIncomeVisibility((value ?: 0) > 18)
                     setEmptyAgeWarningVisibility(isInitialized && value == null)
+                    setIncompleteFamilyVisibility(value != null && value < 18)
+                    setYoungFamilyVisibility((value ?: 0) > 18 && isMarried)
                 }
             }
         }
@@ -82,6 +90,10 @@ class CalculatorPresenter(private val api: Api,
         }
     var disabledGroup: DisabledGroup? = null
     var isMarried = false
+        set(value) {
+            field = value
+            viewState.setYoungFamilyVisibility((age ?: 0) > 18 && value)
+        }
     var income: Int? = null
         set(value) {
             if(field != value) {
@@ -95,38 +107,31 @@ class CalculatorPresenter(private val api: Api,
         set(value) {
             field = value
             viewState.setDisabledChildrenVisibility((value ?: 0) > 0)
-            viewState.setMaximumDisabledChildrenStates(value ?: 0)
-            if(disabledChildrenCount != null) {
-                disabledChildrenCount = if(value == null) {
-                    null
-                } else {
-                    minOf(value, disabledChildrenCount ?: 0)
-                }
-            }
         }
-    var disabledChildrenCount: Int? = null
-        set(value) {
-            field = value
-            viewState.setDisabledChildrenCount(value ?: 0)
-        }
+    var hasDisabledChildren = false
+    var isIncompleteFamily = false
+    var isYoungFamily = false
 
     fun init() {
         viewState.apply {
             age?.let { setAge(it) }
             setMarriedVisibility((age ?: 0) > 18)
             setIncomeVisibility((age ?: 0) > 18)
+            setIncompleteFamilyVisibility(age != null && (age ?: 0) < 18)
             setEmptyAgeWarningVisibility(isInitialized && age == null)
             setRetired(isRetired)
             setDisabled(isDisabled)
             setDisabledGroupVisibility(isDisabled)
             disabledGroup?.let { setDisabledGroup(it) }
             setMarried(isMarried)
+            setYoungFamilyVisibility((age ?: 0) > 18 && isMarried)
+            setYoungFamily(isYoungFamily)
             income?.let { setIncome(it) }
             setEmptyIncomeWarningVisibility(isInitialized && income == null && (age ?: 0) > 18)
             childrenCount?.let { setChildrenCount(it) }
             setDisabledChildrenVisibility((childrenCount ?: 0) > 0)
-            setMaximumDisabledChildrenStates(childrenCount ?: 0)
-            disabledChildrenCount?.let { setDisabledChildrenCount(it) }
+            setHasDisabledChildren(hasDisabledChildren)
+            setIncompleteFamily(isIncompleteFamily)
         }
         isInitialized = true
     }

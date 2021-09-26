@@ -41,7 +41,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/cbRetired">
+                app:layout_constraintBottom_toTopOf="@id/cbIncompleteFamily">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etAge"
@@ -61,6 +61,17 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <CheckBox
+                android:id="@+id/cbIncompleteFamily"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/is_incomplete_family"
+                android:layout_marginStart="@dimen/margin_normal"
+                android:layout_marginEnd="@dimen/margin_normal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tilAge"
+                app:layout_constraintBottom_toTopOf="@id/cbRetired"/>
+
+            <CheckBox
                 android:id="@+id/cbRetired"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -68,7 +79,7 @@
                 android:layout_marginStart="@dimen/margin_normal"
                 android:layout_marginEnd="@dimen/margin_normal"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tilAge"
+                app:layout_constraintTop_toBottomOf="@id/cbIncompleteFamily"
                 app:layout_constraintBottom_toTopOf="@id/cbDisabled"/>
 
             <View
@@ -135,6 +146,17 @@
                 app:layout_constraintTop_toBottomOf="@id/rgDisabledGroups"
                 app:layout_constraintBottom_toTopOf="@id/tilIncome"/>
 
+            <CheckBox
+                android:id="@+id/cbYoungFamily"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/young_family"
+                android:layout_marginStart="@dimen/margin_normal"
+                android:layout_marginEnd="@dimen/margin_normal"
+                app:layout_constraintStart_toEndOf="@id/cbMarried"
+                app:layout_constraintTop_toTopOf="@id/cbMarried"
+                app:layout_constraintBottom_toBottomOf="@id/cbMarried"/>
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilIncome"
                 android:layout_width="0dp"
@@ -170,7 +192,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tilIncome"
-                app:layout_constraintBottom_toTopOf="@id/tvDisabledChildrenTitle">
+                app:layout_constraintBottom_toTopOf="@id/cbDisabledChildren">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etChildrenCount"
@@ -182,27 +204,15 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:id="@+id/tvDisabledChildrenTitle"
+            <CheckBox
+                android:id="@+id/cbDisabledChildren"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/has_disabled_children"
                 android:layout_marginStart="@dimen/margin_normal"
                 android:layout_marginEnd="@dimen/margin_normal"
-                android:layout_marginTop="@dimen/margin_normal"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tilChildrenCount"
-                app:layout_constraintBottom_toTopOf="@id/sbDisabledChildren"/>
-
-            <androidx.appcompat.widget.AppCompatSeekBar
-                android:id="@+id/sbDisabledChildren"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_normal"
-                android:layout_marginEnd="@dimen/margin_normal"
-                android:layout_marginBottom="@dimen/margin_normal"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvDisabledChildrenTitle"/>
+                app:layout_constraintTop_toBottomOf="@id/tilChildrenCount"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

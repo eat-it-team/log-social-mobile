@@ -11,4 +11,8 @@
     <color name="panelBackground">#E8E7E7</color>
     <color name="warningTextColor">#AA0000</color>
     <color name="periodTextColor">#0039AA</color>
+
+    <color name="themeColor1">#123E6B</color>
+    <color name="themeColor2">#3D91B5</color>
+    <color name="themeColor3">#79C3E2</color>
 </resources>
